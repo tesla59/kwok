@@ -87,7 +87,7 @@ default: help
 ## unit-test: Run unit tests
 .PHONY: unit-test
 unit-test:
-	@$(GO_CMD) test ./pkg/...
+	@$(GO_CMD) test -cover -coverprofile=coverprofile.out ./pkg/...
 
 ## verify: Verify code
 .PHONY: verify

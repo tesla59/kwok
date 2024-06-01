@@ -1,0 +1,55 @@
+name: Unit Test
+
+on:
+  pull_request:
+    paths:
+      - pkg/**/*
+      - cmd/**/*
+      - test/**/*
+      - hack/**/*
+      - kustomize/**/*
+      - go.mod
+      - .github/workflows/test-unit.yaml
+  push:
+    paths:
+      - pkg/**/*
+      - cmd/**/*
+      - test/**/*
+      - hack/**/*
+      - kustomize/**/*
+      - go.mod
+      - .github/workflows/test-unit.yaml
+
+env:
+  DOCKER_CLI_EXPERIMENTAL: "enabled"
+  CGO_ENABLED: "0"
+
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Unit Test
+        shell: bash
+        run: |
+          make unit-test
+
+      - name: Show Coverage
+        shell: bash
+        run: |
+          if [ -f coverprofile.out ]; then
+            go tool cover -func=coverprofile.out
+          else
+            echo "No cover profile found"
+          fi
