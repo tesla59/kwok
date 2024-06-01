@@ -136,6 +136,10 @@ func TestAppend(t *testing.T) {
 
 	t.Run("Append to new file", func(t *testing.T) {
 		filePath := filepath.Join(tempDir, "newfile.txt")
+		err = file.WriteWithMode(filePath, nil, 0644)
+		if err != nil {
+			t.Errorf("Failed to create new file: %v", err)
+		}
 		content := []byte("Hello, World!")
 
 		err = file.Append(filePath, content)
