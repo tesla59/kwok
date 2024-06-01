@@ -50,6 +50,13 @@ jobs:
         run: |
           if [ -f coverprofile.out ]; then
             go tool cover -func=coverprofile.out
+            go tool cover -html=coverprofile.out -o coverage.html
           else
             echo "No cover profile found"
           fi
+
+      - name: Upload HTML Preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: Coverage
+          path: coverage.html
